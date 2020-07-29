@@ -33,11 +33,13 @@ Vagrant.configure("2") do |config|
     master.vm.provision "file", source: "app", destination: "app"
     master.vm.provision "file", source: "manage-traffic", destination: "manage-traffic"
     master.vm.provision "file", source: "proxy-config", destination: "proxy-config"
+    master.vm.provision "file", source: "my-manifests", destination: "my-manifests"
 
     config.vm.network "forwarded_port", guest: 32080, host: 32080
     config.vm.network "forwarded_port", guest: 32081, host: 32081
     config.vm.network "forwarded_port", guest: 32082, host: 32082
     config.vm.network "forwarded_port", guest: 32083, host: 32083
+    config.vm.network "forwarded_port", guest: 38053, host: 38053
 
     master.vm.provision "shell", inline: <<-SHELL
       sudo kubeadm init --apiserver-advertise-address=10.0.0.10 --pod-network-cidr=10.244.0.0/16
