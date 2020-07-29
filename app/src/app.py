@@ -1,3 +1,4 @@
+import socket
 from aiohttp import web, client
 
 routes = web.RouteTableDef()
@@ -7,8 +8,11 @@ routes = web.RouteTableDef()
 async def hello(request: web.Request):
     url = request.query.get('url', '')
 
+    hostname = socket.gethostname()
+
     headers = '\n'.join(f'{k}: {v}' for k, v in request.headers.items())
     text = f'Request headers:\n\n{headers}\n\n'
+    text += f'Current hostname {hostname}\n\n'
 
     if url:
         s: client.ClientSession
