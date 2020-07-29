@@ -155,4 +155,24 @@ kubectl apply -f proxy-config/inbound-http-metrics.yaml
 Зайдем в [Prometheus](http://127.0.0.1:32082) и запросим данные:
 
 ```text
-round(sum(rate(istio_requests_total{reporter="destination"}[15m])) by (destination_workload), 0.001)```
+round(sum(rate(istio_requests_total{reporter="destination"}[15m])) by (destination_workload), 0.001)
+```
+
+## Service discovery
+
+Создаем неймспейс вне сервис-меша, в котором будет еще один под `proxy-app`:
+
+```bash
+kubectl apply -f my-manifests/service-discovery.yaml
+```
+
+Запрашиваем сервис внутри меша извне его:
+
+```bash
+curl "http://127.0.0.1:32032/url=http://echoserver.default.svc.cluster.local"
+```
+
+Видим, что трафик распределяется по правилам заданным в соответствующем объекте [`VirtualService`](my-manifests/service-discovery.yaml).
+
+
+Тут происходит следующее, при обращении к `echoserver.default.svc.cluster.local` трафик уходит на IngressGateway в неймспейсе `istio-system`, а с помощью Envoy уже направляется на нужный _настоящий_ сервис `echoserver-real.default.svc.cluster.local`.
