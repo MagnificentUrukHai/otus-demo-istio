@@ -7,22 +7,6 @@ metadata:
     istio-injection: enabled # Включаем инжект сайдкаров Istio для неймспейса
 
 ---
-# this one is the "real" service which actualy points to pods
-# this should be used as a service to which IgressGateway should point to
-apiVersion: v1
-kind: Service
-metadata:
-  name: echoserver-real
-  namespace: default
-spec:
-  ports:
-    - port: 80
-      targetPort: 8080
-      name: "http"  # Istio требует явного указания протокола при определенных настройках
-  selector:
-    app: echoserver
-
----
 # this one is the "fake" service to which end use should address
 # it shouldn't have selector because it points to another service in anoter namespace, see: https://kubernetes.io/docs/concepts/services-networking/service/#services-without-selectors
 apiVersion: v1
@@ -67,6 +51,21 @@ spec:
           ports:
             - containerPort: 8080
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: echoserver-v1
+  namespace: default
+spec:
+  ports:
+    - port: 80
+      targetPort: 8080
+      name: "http"  # Istio требует явного указания протокола при определенных настройках
+  selector:
+    app: echoserver
+    version: "1"
+
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -93,3 +92,17 @@ spec:
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: echoserver-v2
+  namespace: default
+spec:
+  ports:
+    - port: 80
+      targetPort: 8080
+      name: "http"  # Istio требует явного указания протокола при определенных настройках
+  selector:
+    app: echoserver
+    version: "2"

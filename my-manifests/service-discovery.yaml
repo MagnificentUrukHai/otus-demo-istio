@@ -54,7 +54,6 @@ metadata:
   namespace: default
 spec:
   selector:
-    # istio-gateway: "true"
     istio: ingressgateway
   servers:
   - port:
@@ -79,25 +78,34 @@ spec:
     - name: "echoserver"
       route:
         - destination:
-            host: echoserver-real.default.svc.cluster.local
+            host: echoserver-v1.default.svc.cluster.local
             subset: v1
           weight: 30
         - destination:
-            host: echoserver-real.default.svc.cluster.local
+            host: echoserver-v2.default.svc.cluster.local
             subset: v2
           weight: 70
 ---
 apiVersion: networking.istio.io/v1beta1
 kind: DestinationRule
 metadata:
-  name: echoserver
+  name: echoserver-v1
   namespace: default
 spec:
-  host: echoserver-real.default.svc.cluster.local
+  host: echoserver-v1.default.svc.cluster.local
   subsets:
   - name: v1
     labels:
       version: "1"
+---
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: echoserver-v2
+  namespace: default
+spec:
+  host: echoserver-v2.default.svc.cluster.local
+  subsets:
   - name: v2
     labels:
       version: "2"

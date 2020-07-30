@@ -2,6 +2,8 @@ IMAGE_NAME = "bento/ubuntu-18.04"
 
 Vagrant.configure("2") do |config|
   config.vm.box = IMAGE_NAME
+  config.vm.synced_folder "my-manifests/", "/home/vagrant/my-manifests/"
+  config.vm.synced_folder "app/", "/home/vagrant/app/"
   config.vm.provider "virtualbox" do |v|
     v.memory = 8192
     v.cpus = 2
@@ -30,10 +32,8 @@ Vagrant.configure("2") do |config|
     master.vm.hostname = "k8s-master"
 
     master.vm.provision "file", source: "istio", destination: "istio"
-    master.vm.provision "file", source: "app", destination: "app"
     master.vm.provision "file", source: "manage-traffic", destination: "manage-traffic"
     master.vm.provision "file", source: "proxy-config", destination: "proxy-config"
-    master.vm.provision "file", source: "my-manifests", destination: "my-manifests"
 
     config.vm.network "forwarded_port", guest: 32080, host: 32080
     config.vm.network "forwarded_port", guest: 32081, host: 32081
