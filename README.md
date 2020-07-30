@@ -169,7 +169,7 @@ kubectl apply -f my-manifests/service-discovery.yaml
 Запрашиваем сервис внутри меша извне его:
 
 ```bash
-curl "http://127.0.0.1:32032/url=http://echoserver.default.svc.cluster.local"
+curl "http://127.0.0.1:32032?url=http://echoserver.default.svc.cluster.local"
 ```
 
 Видим, что трафик распределяется по правилам заданным в соответствующем объекте [`VirtualService`](my-manifests/service-discovery.yaml).
