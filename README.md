@@ -175,4 +175,4 @@ curl "http://127.0.0.1:32032?url=http://echoserver.default.svc.cluster.local"
 Видим, что трафик распределяется по правилам заданным в соответствующем объекте [`VirtualService`](my-manifests/service-discovery.yaml).
 
 
-Тут происходит следующее, при обращении к `echoserver.default.svc.cluster.local` трафик уходит на IngressGateway в неймспейсе `istio-system`, а с помощью Envoy уже направляется на нужный _настоящий_ сервис `echoserver-real.default.svc.cluster.local`.
+Тут происходит следующее, при обращении к `echoserver.default.svc.cluster.local` трафик уходит на IngressGateway в неймспейсе `istio-system`, а с помощью Envoy уже направляется на нужную версию сервиса
