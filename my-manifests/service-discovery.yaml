@@ -61,9 +61,8 @@ spec:
       name: http
       protocol: HTTP
     hosts:
-      - "echoserver.default.svc.cluster.local"
+      - "default/*"
 ---
-
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
@@ -71,6 +70,33 @@ metadata:
   namespace: default
 spec:
   hosts:
+    - echoserver # short name doesn't work, see: https://istio.io/latest/docs/reference/config/networking/virtual-service/#VirtualService
+    - echoserver.default
+    - echoserver.default.svc
+    - echoserver.default.svc.cluster.local
+  http:
+    - name: "echoserver"
+      route:
+        - destination:
+            host: echoserver-v1.default.svc.cluster.local
+            subset: v1
+          weight: 30
+        - destination:
+            host: echoserver-v2.default.svc.cluster.local
+            subset: v2
+          weight: 70
+---
+
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: echoserver-gateway
+  namespace: default
+spec:
+  hosts:
+    - echoserver # short name doesn't work, see: https://istio.io/latest/docs/reference/config/networking/virtual-service/#VirtualService
+    - echoserver.default
+    - echoserver.default.svc
     - echoserver.default.svc.cluster.local
   gateways:
     - gateway
